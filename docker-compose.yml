@@ -1,0 +1,28 @@
+services:
+  inventory:
+    build: inventario
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://inventorydb:3306/inventoryDB?createDatabaseIfNotExist=true
+      DB_USER_NAME: root
+      DB_PASSWORD: 118128san
+    restart: always
+    depends_on:
+      inventorydb:
+          condition: service_healthy
+
+  inventorydb: 
+    image: mysql:8.2.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 118128san
+      MYSQL_PASSWORD: 118128san
+      MYSQL_DATABASE: inventoryDB
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
